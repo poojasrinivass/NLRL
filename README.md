@@ -2,11 +2,11 @@
 Implementaion of [Neural Logic Reinforcement learning](https://arxiv.org/abs/1904.10729) and several benchmarks.
 Neural Logic Reinforcement Learning uses deep reinforcement leanring methods to train a differential indutive logic progamming architecture, obtaining explainable and generalizable policies. Paper accepted by ICML2019.
 
-
 ## Enviornments
 Developed in python2.7, Linux enviornment.
 
 ### Dependencies
+* Create a virtual env 
 * numpy: downgrade to numpy v 1.14.0 using "python -m pip install numpy=1.14.0" in your virtual env
 * tensorflow
 
