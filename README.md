@@ -7,7 +7,7 @@ Neural Logic Reinforcement Learning uses deep reinforcement leanring methods to 
 Developed in python2.7, Linux enviornment.
 
 ### Dependencies
-* numpy
+* numpy: downgrade to numpy v 1.14.0 using "python -m pip install numpy=1.14.0" in your virtual env
 * tensorflow
 
 ## User Guide
