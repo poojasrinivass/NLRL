@@ -50,7 +50,7 @@ def start_Random(task, name, mode, variation=None):
         critic = None
         learner = ReinforceLearner(agent, env, 0.1, critic=critic, discounting=discounting,
                                    batched=True, steps=12000, name=name)
-    if task == "windycliffwalking":
+    elif task == "windycliffwalking":
         man, env = setup_windycliffwalking(variation)
         agent = RandomAgent(env.action_n)
         discounting = 1.0
@@ -100,7 +100,7 @@ def start_DILP(task, name, mode, variation=None):
                                   involve_steps=True)
         learner = ReinforceLearner(agent, env, 0.05, critic=critic, discounting=discounting,
                                    batched=True, steps=50000, name=name)
-    if task == "windycliffwalking":
+    elif task == "windycliffwalking":
         man, env = setup_windycliffwalking(variation)
         agent = RLDILP(man, env, state_encoding="atoms")
         discounting = 1.0
@@ -160,7 +160,7 @@ def start_NN(task, name, mode, variation=None):
             critic = NeuralCritic([20], env.state_dim, 1.0, learning_rate=0.001, state2vector=env.state2vector)
         learner = ReinforceLearner(agent, env, 0.002, critic=critic,
                                    steps=120000, name=name)
-    if task == "windycliffwalking":
+    elif task == "windycliffwalking":
         man, env = setup_windycliffwalking(variation)
         agent = NeuralAgent([20,10], env.action_n, env.state_dim)
         if variation:
