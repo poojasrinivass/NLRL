@@ -78,7 +78,7 @@ def start_Random(task, name, mode, variation=None):
     else:
         raise ValueError()
     if mode == "train":
-        return learner.train()[-1]
+        return learner.train()
     elif mode == "evaluate":
         return learner.evaluate()
     else:
@@ -99,7 +99,7 @@ def start_DILP(task, name, mode, variation=None):
             critic = NeuralCritic([20], env.state_dim, 1.0, learning_rate=0.001, state2vector=env.state2vector,
                                   involve_steps=True)
         learner = ReinforceLearner(agent, env, 0.05, critic=critic, discounting=discounting,
-                                   batched=True, steps=50000, name=name)
+                                   batched=True, steps=1, name=name)
     elif task == "windycliffwalking":
         man, env = setup_windycliffwalking(variation)
         agent = RLDILP(man, env, state_encoding="atoms")
@@ -159,7 +159,7 @@ def start_NN(task, name, mode, variation=None):
         else:
             critic = NeuralCritic([20], env.state_dim, 1.0, learning_rate=0.001, state2vector=env.state2vector)
         learner = ReinforceLearner(agent, env, 0.002, critic=critic,
-                                   steps=120000, name=name)
+                                   steps=1, name=name)
     elif task == "windycliffwalking":
         man, env = setup_windycliffwalking(variation)
         agent = NeuralAgent([20,10], env.action_n, env.state_dim)
@@ -229,6 +229,8 @@ if __name__ == "__main__":
         try:
             if args.algo == "DILP":
                 starter = start_DILP
+            elif args.algo == "Random":
+                starter = start_Random
             elif args.algo == "NN":
                 starter = start_NN
             else:
