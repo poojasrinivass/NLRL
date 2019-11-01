@@ -39,6 +39,7 @@ class ReinforceLearner(object):
         self.batch_size = minibatch_size
         self.optimizer = optimizer
         self.log_steps = 100
+        self.tf_train = tf.constant([0])
 
     def _construct_train(self, learning_rate):
         self.tf_returns = tf.placeholder(shape=[None], dtype=tf.float32)
@@ -279,7 +280,7 @@ class ReinforceLearner(object):
                              self.tf_additional_discount:np.array(additional_discount),
                              self.tf_returns:final_return,
                              self.tf_action_index:np.array(action_history),
-                             self.agent.tf_input: [np.array(input_vector_history)[:, 0]]}
+                             self.agent.tf_input: np.expand_dims(np.array(input_vector_history),1)}
             result = sess.run(ops, feed_dict)
         else:
             first = True
