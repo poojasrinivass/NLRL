@@ -116,7 +116,7 @@ class ReinforceLearner(object):
                 if self.state_encoding=="terms":
                     valuation = self.agent.base_valuation
                 else:
-                    valuation = self.agent.base_valuation + self.agent.axioms2valuation(self.env.state2atoms(self.env.state))
+                    valuation = self.agent.base_valuation + self.agent.state2valuation(self.env.state))
                 action_prob,result = sess.run([self.tf_action_prob, self.agent.tf_result_valuation], feed_dict={self.agent.tf_input_valuation: [valuation],
                                                                                                                 self.tf_actions_valuation_indexes: [indexes]})
             elif self.type == "NN":

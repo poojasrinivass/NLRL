@@ -140,6 +140,9 @@ class CliffWalking(SymbolicEnvironment):
             raise ValueError
         return CliffWalking(initial_state, width)
 
+    def state2input(x):
+        return np.asarray(x).reshape(1,2)
+
 
 class WindyCliffWalking(CliffWalking):
     def next_step(self, action):
@@ -261,6 +264,20 @@ class BlockWorld(SymbolicEnvironment):
 
     def get_reward(self):
         pass
+
+    def state2input(state):
+        inp = np.empty((4, 2))
+        for i in range(len(state)):
+            for j in range(len(state[i])):
+                if state[i][j] == 'a':
+                    inp[0] = np.asarray([i, j])
+                if state[i][j] == 'b':
+                    inp[1] = np.asarray([i, j])
+                if state[i][j] == 'c':
+                    inp[2] = np.asarray([i, j])
+                elif state[i][j] == 'd':
+                    inp[3] = np.asarray([i, j])
+        return inp
 
 class Unstack(BlockWorld):
     all_variations = ("swap top 2","2 columns", "5 blocks",
