@@ -235,7 +235,7 @@ if __name__ == "__main__":
                 starter = start_NN
             else:
                 raise ValueError()
-            pprint(starter(args.task, args.name, args.mode))
+            pprint(starter(args.task, args.name, args.mode, variation=True))
         except Exception as e:
             print(e.message)
             raise e

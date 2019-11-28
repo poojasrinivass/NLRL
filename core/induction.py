@@ -79,7 +79,6 @@ class BaseDILP(object):
                 result.append((weights[indexes[j]], str(clauses[i][indexes[j]])))
         return result
 
-
     def axioms2valuation(self, axioms):
         '''
         :param axioms: list of Atoms, background knowledge
@@ -260,10 +259,31 @@ class RLDILP(BaseDILP):
         super(RLDILP, self).__init__(rules_manager, env.background, independent_clause)
         self.env = env
         self.state_encoding=state_encoding
+        self.encoding_weights = OrderedDict()
+        self.encoding_bias = OrderedDict()
+        self.__init__encoding()
         if self.state_encoding=="atoms":
             self.all_actions = self.get_all_actions()
         else:
             self.all_actions = self.env.actions
+
+    def __init__encoding(self):
+        inp = self.env.state2input(self.env.state)
+        self.encoding_weights['layer1'] = np.ones(inp.shape[0], 10)
+        self.encoding_bias['layer1'] = np.ones(1, 10)
+        self.encoding_weights['layer2'] = np.ones(10, 20)
+        self.encoding_bias['layer2'] = np.ones(1, 20)
+        self.encoding_weights['output'] = np.ones(20, len(self.rules_manager.all_grounds))
+        self.encoding_bias['output'] = np.ones(1, len(self.rules_manager.all_grounds))
+    
+    def state2valuation(self, state):
+        state = tf.nn.xw_plus_b(state, self.encoding_weights['layer1'], self.encoding_bias['layer1'])
+        state = tf.nn.softsign(state)
+        state = tf.nn.xw_plus_b(state, self.encoding_weights['layer2'], self.encoding_bias['layer2'])
+        state = tf.nn.softmax(state)
+        valuation = tf.nn.xw_plus_b(state, self.encoding_weights['output'], self.encoding_bias['output'])
+        valuation = tf.nn.relu(valuation)
+        return valuation
 
     def get_all_actions(self):
         atoms = self.valuation2atoms(self.base_valuation, -1).keys() #ordered
@@ -280,7 +300,7 @@ class RLDILP(BaseDILP):
         """
         atoms = self.valuation2atoms(self.base_valuation, -1).keys() #ordered
         indexes = [None for _ in range(len(self.all_actions))]
-        for i,atom in enumerate(atoms):
+        for i, atom in enumerate(atoms):
             if self.state_encoding == "terms":
                 if state[0].terms == atom.terms and atom.predicate in self.env.actions:
                     indexes[self.all_actions.index(atom.predicate)] = i
@@ -310,14 +330,23 @@ class RLDILP(BaseDILP):
         else:
             return None, None
 
-
     def log(self, sess):
         self.show_definition(sess)
         valuation_dict = self.valuation2atoms(self.deduction(session=sess)).items()
         for atom, value in valuation_dict:
             print(str(atom)+": "+str(value))
 
-
+    def all_variables_encode(self):
+        if self.independent_clause:
+            var = [weight for weights in self.rule_weights.values() for weight in weights]
+        else:
+            var = [weights for weights in self.rule_weights.values()]
+        for l in self.encoding_weights:
+            for i in np.nditer(self.encoding_weights[l]):
+                var.append(i)
+            for i in np.nditer(self.encoding_bias[l]):
+                var.append(i)
+        return var
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
